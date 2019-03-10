@@ -1,10 +1,9 @@
-//! Units of measurement is a crate that does automatic type-safe zero-cost
-//! [dimensional analysis][analysis]. You can create your own systems or use the pre-built
-//! [International System of Units][si] (SI) which is based on the
-//! [International System of Quantities][isq] (ISQ) and includes numerous [quantities][quantity]
-//! (length, mass, time, ...) with conversion factors for even more numerous
-//! [measurement units][measurement] (meter, kilometer, foot, mile, ...). No more crashing your
-//! [climate orbiter][orbiter]!
+//! `uom`, Units of measurement, is a crate that does automatic type-safe zero-cost [dimensional
+//! analysis][analysis]. You can create your own systems or use the pre-built [International System
+//! of Units][si] (SI) which is based on the [International System of Quantities][isq] (ISQ) and
+//! includes numerous [quantities][quantity] (length, mass, time, ...) with conversion factors for
+//! even more numerous [measurement units][measurement] (meter, kilometer, foot, mile, ...). No
+//! more crashing your [climate orbiter][orbiter]!
 //!
 //! [analysis]: https://en.wikipedia.org/wiki/Dimensional_analysis
 //! [si]: http://jcgm.bipm.org/vim/en/1.16.html
@@ -14,54 +13,42 @@
 //! [orbiter]: https://en.wikipedia.org/wiki/Mars_Climate_Orbiter
 //!
 //! ## Usage
-//! `uom` requires `rustc` 1.24.1 or later. Add this to your `Cargo.toml`:
+//! `uom` requires `rustc` 1.31.0 or later. Add this to your `Cargo.toml`:
 //!
 //! ```toml
 //! [dependencies]
 //! uom = "0.21.1"
 //! ```
 //!
-//! and this to your crate root:
-//!
-//! ```rust
-//! extern crate uom;
-//! ```
-//!
 //! The simple example below shows how to use quantities and units as well as how `uom` stops
 //! invalid operations:
 //!
-#![cfg_attr(all(feature = "si", feature = "f32"), doc = " ```rust")]
-#![cfg_attr(not(all(feature = "si", feature = "f32")), doc = " ```rust,ignore")]
-//! extern crate uom;
+//! ```rust
+//! //use uom::si::f32::*;
+//! //use uom::si::length::kilometer;
+//! //use uom::si::time::second;
 //!
-//! use uom::si::f32::*;
-//! use uom::si::length::kilometer;
-//! use uom::si::time::second;
+//! //fn main() {
+//! //    let length = Length::new::<kilometer>(5.0);
+//! //    let time = Time::new::<second>(15.0);
+//! //    let velocity/*: Velocity*/ = length / time;
+//! //    let _acceleration = calc_acceleration(velocity, time);
+//! //    //let error = length + time; // error[E0308]: mismatched types
+//! //}
 //!
-//! fn main() {
-//!     let length = Length::new::<kilometer>(5.0);
-//!     let time = Time::new::<second>(15.0);
-//!     let velocity/*: Velocity*/ = length / time;
-//!     let _acceleration = calc_acceleration(velocity, time);
-//!     //let error = length + time; // error[E0308]: mismatched types
-//! }
-//!
-//! fn calc_acceleration(velocity: Velocity, time: Time) -> Acceleration {
-//!     velocity / time
-//! }
+//! //fn calc_acceleration(velocity: Velocity, time: Time) -> Acceleration {
+//! //    velocity / time
+//! //}
 //! ```
 //!
-//! See examples provided with the source for more advanced usage including how to create `Quantity`
-//! type aliases for a different set of base units and how to create an entirely new system of
-//! quantities.
+//! See the [examples](examples) directory for more advanced usage:
 //!
 //! ## Features
 //! `uom` has multiple `Cargo` features for controlling available underlying storage types, the
-//! inclusion of the pre-built [International System of Units][si] (SI), support for
-//! [Serde][serde], and `no_std` functionality. The features are described below. `f32`, `f64`,
-//! `std`, and `si` are enabled by default. Features can be cherry-picked by using the
-//! `--no-default-features` and `--features "..."` flags when compiling `uom` or specifying
-//! features in Cargo.toml:
+//! inclusion of the pre-built [International System of Units][si] (SI), support for [Serde][serde],
+//! and `no_std` functionality. The features are described below. `f32`, `f64`, `std`, and `si` are
+//! enabled by default. Features can be cherry-picked by using the `--no-default-features` and
+//! `--features "..."` flags when compiling `uom` or specifying features in Cargo.toml:
 //!
 //! ```toml
 //! [dependencies]
@@ -70,8 +57,8 @@
 //!     default-features = false,
 //!     features = [
 //!         "autoconvert", # automatic base unit conversion.
-//!         "usize", "u8", "u16", "u32", "u64", # Unsigned integer storage types.
-//!         "isize", "i8", "i16", "i32", "i64", # Signed interger storage types.
+//!         "usize", "u8", "u16", "u32", "u64", "u128", # Unsigned integer storage types.
+//!         "isize", "i8", "i16", "i32", "i64", "i128", # Signed interger storage types.
 //!         "bigint", "biguint", # Arbitrary width integer storage types.
 //!         "rational", "rational32", "rational64", "bigrational", # Integer ratio storage types.
 //!         "f32", "f64", # Floating point storage types.
@@ -81,15 +68,11 @@
 //! }
 //! ```
 //!
-//!  * `autoconvert` -- Feature to enable automatic conversion between base units in binary
-//!    operators. Disabling the feature only allows for quantities with the same base units to
-//!    directly interact. The feature exists to account for compiler limitations where zero-cost
-//!    code is not generated for non-floating point underlying storage types.
-//!  * `usize`, `u8`, `u16`, `u32`, `u64`, `isize`, `i8`, `i16`, `i32`, `i64`, `bigint`, `biguint`,
-//!    `rational`, `rational32`, `rational64`, `bigrational`, `f32`, `f64` -- Features to enable
-//!    underlying storage types. At least one of these features must be enabled. `f32` and `f64` are
-//!    enabled by default. See the [Design](#design) section for implications of choosing different
-//!    underlying storage types.
+//!  * `usize`, `u8`, `u16`, `u32`, `u64`, `u128`, `isize`, `i8`, `i16`, `i32`, `i64`, `i128`,
+//!    `bigint`, `biguint`, `rational`, `rational32`, `rational64`, `bigrational`, `f32`, `f64`
+//!    -- Features to enable underlying storage types. At least one of these features must be
+//!    enabled. `f32` and `f64` are enabled by default. See the [Design](#design) section for
+//!    implications of choosing different underlying storage types.
 //!  * `si` -- Feature to include the pre-built [International System of Units][si] (SI). Enabled by
 //!    default.
 //!  * `std` -- Feature to compile with standard library support. Disabling this feature compiles
@@ -101,29 +84,6 @@
 //! [serde]: https://serde.rs/
 //!
 //! ## Design
-//! Rather than working with [measurement units](http://jcgm.bipm.org/vim/en/1.9.html) (meter,
-//! kilometer, foot, mile, ...) `uom` works with [quantities](http://jcgm.bipm.org/vim/en/1.1.html)
-//! (length, mass, time, ...). This simplifies usage because units are only involved at interface
-//! boundaries: the rest of your code only needs to be concerned about the quantities involved. This
-//! also makes operations on quantities (+, -, \*, /, ...) have zero runtime cost<sup>1</sup> over
-//! using the raw storage type (e.g. `f32`).
-//!
-//! `uom` normalizes values to the [base unit](http://jcgm.bipm.org/vim/en/1.10.html) for the
-//! quantity. Alternative base units can be used by executing the macro defined for the system of
-//! quantities (`ISQ!` for the SI). `uom` supports `usize`, `u8`, `u16`, `u32`, `u64`, `isize`,
-//! `i8`, `i16`, `i32`, `i64`, `bigint`, `biguint`, `rational`, `rational32`, `rational64`,
-//! `bigrational`, `f32`, and `f64` as the underlying storage type.
-//!
-//! A consequence of normalizing values to the base unit is that some values may not be able to be
-//! represented or can't be precisely represented for floating point and rational underlying
-//! storage types. For example if the base unit of `length` is `meter` and the underlying storage
-//! type is `i32` then values like `1 centimeter` or `1.1 meter` cannot be represented. `1
-//! centimeter` is normalized to `0.01 meter` which can't be stored in an `i32`. `uom` only allows
-//! units to be used safely. Users of this library will still need to be aware of implementation
-//! details of the underlying storage type including limits and precision.
-//!
-//!  1. As of `rustc` 1.25.0 where codegen bug
-//!    [#38269](https://github.com/rust-lang/rust/issues/38269) is resolved.
 //!
 //! ## Contributing
 //! Contributions are welcome from everyone. Submit a pull request, an issue, or just add comments
@@ -132,9 +92,9 @@
 //! defines the [SI] and can be used as a comprehensive reference for changes to `uom`. Conversion
 //! factors for non-SI units can be found in NIST [Special Publication 811][nist811].
 //!
-//! Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in
-//! the work by you, as defined in the Apache-2.0 license, shall be dual licensed as below, without
-//! any additional terms or conditions.
+//! Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion
+//! in the work by you, as defined in the Apache-2.0 license, shall be dual licensed as below,
+//! without any additional terms or conditions.
 //!
 //! ### License
 //! Licensed under either of
@@ -154,7 +114,7 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 // Rustc lints.
 #![forbid(unsafe_code)]
-// #![warn(bare_trait_objects)] // Requires rustc 1.27.
+#![warn(bare_trait_objects)]
 #![warn(missing_copy_implementations)]
 #![warn(missing_debug_implementations)]
 #![warn(missing_docs)]
@@ -164,179 +124,53 @@
 #![warn(unused_import_braces)]
 #![warn(unused_qualifications)]
 #![warn(unused_results)]
-// Clippy lints.
-#![cfg_attr(
-    feature = "cargo-clippy",
-    allow(clippy::inline_always, clippy::excessive_precision)
-)]
 
 // Fail to compile if no underlying storage type features are specified.
-#[cfg_attr(rustfmt, rustfmt_skip)]
+#[rustfmt::skip]
 #[cfg(not(any(
     feature = "usize", feature = "u8", feature = "u16", feature = "u32", feature = "u64",
+    feature = "u128",
     feature = "isize", feature = "i8", feature = "i16", feature = "i32", feature = "i64",
+    feature = "i128",
     feature = "bigint", feature = "biguint",
     feature = "rational", feature = "rational32", feature = "rational64", feature = "bigrational",
-    feature = "f32", feature = "f64", )))]
+    feature = "f32", feature = "f64")))]
+#[rustfmt::skip]
 compile_error!("A least one underlying storage type must be enabled. See the features section of \
     uom documentation for available underlying storage type options.");
 
-#[doc(hidden)]
-pub extern crate num_traits;
-
-#[doc(hidden)]
-#[cfg(feature = "bigint-support")]
-pub extern crate num_bigint;
-
-#[doc(hidden)]
-#[cfg(any(feature = "rational-support", feature = "bigint-support"))]
-pub extern crate num_rational;
-
-#[doc(hidden)]
-#[cfg(feature = "serde")]
-pub extern crate serde;
-
-#[doc(hidden)]
-pub extern crate typenum;
-
-#[cfg(all(test, any(feature = "f32", feature = "f64")))]
-#[macro_use]
-extern crate approx;
-#[cfg(test)]
-#[macro_use]
-extern crate quickcheck;
-#[cfg(all(test, feature = "serde"))]
-extern crate serde_json;
-#[cfg(test)]
-#[macro_use]
-extern crate static_assertions;
-
-// Conditionally import `core` or `std` based on feature selection.
-#[doc(hidden)]
-pub mod lib {
-    #[cfg(not(feature = "std"))]
-    pub use core::*;
-    #[cfg(feature = "std")]
-    pub use std::*;
-
-    // Re-export `ops` module along with `typenum::ops` to provide all types in a single mod. This
-    // allows the `system!` macro to reference all operations by the absolute path. Macro paths and
-    // idents can't easily be combined without a `use` statement that pollutes the macro execution
-    // location's namespace.
-    pub mod ops {
-        #[cfg(not(feature = "std"))]
-        pub use core::ops::*;
-        #[cfg(feature = "std")]
-        pub use std::ops::*;
-        pub use typenum::type_operators::*;
-    }
-}
-
-// Conditionally import num sub-crate types based on feature selection.
-#[doc(hidden)]
-pub mod num {
-    #[cfg(feature = "std")]
-    pub use num_traits::float::Float;
-    #[cfg(not(feature = "std"))]
-    pub use num_traits::float::FloatCore as Float;
-
-    pub use num_traits::{pow, FromPrimitive, Num, One, Saturating, Signed, Zero};
-
-    #[cfg(feature = "bigint-support")]
-    pub use num_bigint::{BigInt, BigUint};
-
-    #[cfg(feature = "rational-support")]
-    pub use num_rational::Rational;
-
-    #[cfg(feature = "bigint-support")]
-    pub use num_rational::BigRational;
-
-    #[cfg(any(feature = "rational-support", feature = "bigint-support"))]
-    pub mod rational {
-        pub use num_rational::*;
-    }
-}
+use num_traits as num;
+use std::marker::PhantomData;
 
 /// Primitive traits and types representing basic properties of types.
-pub mod marker {
-    /// Trait to denote that a quantity is able to be added with a quantity of the same dimensions.
-    /// When a specific quantity's kind inherits this trait `ops::Add` is implemented
-    /// automatically.
-    pub trait Add {}
+pub mod marker;
 
-    /// Trait to denote that a quantity is able to be added with a quantity of the same dimensions.
-    /// When a specific quantity's kind inherits this trait `ops::AddAssign` is implemented
-    /// automatically.
-    pub trait AddAssign {}
+// #[cfg(feature = "si")]
+// pub mod si;
 
-    /// Trait to denote that a quantity is able to be subtracted with a quantity of the same
-    /// dimensions. When a specific quantity's kind inherits this trait `ops::Sub` is implemented
-    /// automatically.
-    pub trait Sub {}
-
-    /// Trait to denote that a quantity is able to be subtracted with a quantity of the same
-    /// dimensions. When a specific quantity's kind inherits this trait `ops::SubAssign` is
-    /// implemented automatically.
-    pub trait SubAssign {}
-
-    /// Trait to denote that a quantity is able to be multiplied with a quantity of the same
-    /// dimensions. When a specific quantity's kind inherits this trait `ops::Mul` is implemented
-    /// automatically.
-    pub trait Mul {}
-
-    /// Trait to denote that a quantity is able to be multiplied with a quantity of the same
-    /// dimensions. When a specific quantity's kind inherits this trait `ops::MulAssign` is
-    /// implemented automatically.
-    pub trait MulAssign {}
-
-    /// Trait to denote that a quantity is able to be divided with a quantity of the same
-    /// dimensions. When a specific quantity's kind inherits this trait `ops::Div` is implemented
-    /// automatically.
-    pub trait Div {}
-
-    /// Trait to denote that a quantity is able to be divided with a quantity of the same
-    /// dimensions. When a specific quantity's kind inherits this trait `ops::DivAssign` is
-    /// implemented automatically.
-    pub trait DivAssign {}
-
-    /// Trait to denote that a quantity is able to be negated. When a specific quantity's kind
-    /// inherits this trait `ops::Neg` is implemented automatically.
-    pub trait Neg {}
-
-    /// Trait to denote that a quantity is able to calculate a remainder with a quantity of the
-    /// same dimensions. When a specific quantity's kind inherits this trait `ops::Rem` is
-    /// implemented automatically.
-    pub trait Rem {}
-
-    /// Trait to denote that a quantity is able to calculate a remainder with a quantity of the
-    /// same dimensions. When a specific quantity's kind inherits this trait `ops::RemAssign` is
-    /// implemented automatically.
-    pub trait RemAssign {}
-
-    /// Trait to denote that a quantity is able to perform saturating additions and subtractions
-    /// with a quantity of the same dimensions. When a specific quantity's kind inherits this trait
-    /// `ops::Saturating` is implemented automatically.
-    pub trait Saturating {}
+/// TODO: Document and implement Debug.
+#[derive(Debug)]
+pub struct Quantity<U, V> {
+    unit: PhantomData<U>,
+    value: V,
 }
 
-#[macro_use]
-mod features;
+/// TODO: Document
+pub trait Unit {
+    /// TODO
+    type Dimension;
+    /// TODO
+    type Kind;
 
-#[macro_use]
-mod storage_types;
+    /// Unit abbreviation.
+    fn abbreviation() -> &'static str;
 
-#[macro_use]
-mod system;
+    /// Unit singular description.
+    fn singular() -> &'static str;
 
-#[macro_use]
-mod quantity;
-
-#[cfg(feature = "si")]
-#[macro_use]
-pub mod si;
-
-#[cfg(test)]
-mod tests;
+    /// Unit plural description.
+    fn plural() -> &'static str;
+}
 
 /// Trait to identify [units][units] which have a [conversion factor][factor].
 ///
@@ -374,10 +208,7 @@ pub trait Conversion<V> {
     ///
     /// [factor]: https://jcgm.bipm.org/vim/en/1.24.html
     #[inline(always)]
-    fn into_conversion(&self) -> Self::T
-    where
-        Self: Sized,
-    {
+    fn into_conversion(&self) -> Self::T {
         Self::coefficient()
     }
 }
@@ -386,207 +217,150 @@ pub trait Conversion<V> {
 ///
 /// [factor]: https://jcgm.bipm.org/vim/en/1.24.html
 pub trait ConversionFactor<V>:
-    lib::ops::Add<Self, Output = Self>
-    + lib::ops::Sub<Self, Output = Self>
-    + lib::ops::Mul<Self, Output = Self>
-    + lib::ops::Div<Self, Output = Self>
+    std::ops::Add<Self, Output = Self>
+    + std::ops::Sub<Self, Output = Self>
+    + std::ops::Mul<Self, Output = Self>
+    + std::ops::Div<Self, Output = Self>
     + num::Zero
     + num::One
 {
     /// Raises a `ConversionFactor<V>` to an integer power.
     fn powi(self, e: i32) -> Self;
 
-    /// Converts a `ConversionFactor<V>` into its underlying type.
+    /// Converts a `ConversionFactor<V>` into its underlying storage type.
     fn value(self) -> V;
 }
 
-/// Default [kind][kind] of quantities to allow addition, subtraction, multiplication, division,
-/// remainder, negation, and saturating addition/subtraction.
-///
-/// [kind]: https://jcgm.bipm.org/vim/en/1.2.html
-pub trait Kind:
-    marker::Add
-    + marker::AddAssign
-    + marker::Sub
-    + marker::SubAssign
-    + marker::Mul
-    + marker::MulAssign
-    + marker::Div
-    + marker::DivAssign
-    + marker::Rem
-    + marker::RemAssign
-    + marker::Neg
-    + marker::Saturating
+/*
+pub trait Dimension: std::fmt::Debug {
+    type L: Integer;
+    type M: Integer;
+}
+
+pub trait Unit {
+    type D: Dimension + ?Sized;
+    type K: ?Sized;
+}
+
+pub trait Conversion<V>: Unit {
+    fn conversion() -> V;
+}
+
+#[derive(Debug)]
+pub struct Quantity<U, V>
+where
+    //U: Conversion<V> + ?Sized,
+    U: Unit + ?Sized
 {
+    unit: PhantomData<U>,
+    value: V,
 }
 
-storage_types! {
-    types: Float;
-
-    impl ::Conversion<V> for V {
-        type T = V;
-
-        #[inline(always)]
-        fn into_conversion(&self) -> Self::T {
-            *self
-        }
-    }
-
-    impl ::ConversionFactor<V> for V {
-        #[inline(always)]
-        fn powi(self, e: i32) -> Self {
-            <V as ::num::Float>::powi(self, e)
-        }
-
-        #[inline(always)]
-        fn value(self) -> V {
-            self
-        }
+impl<U, V> Quantity<U, V>
+where
+    //U: Conversion<V> + ?Sized,
+    U: Unit + ?Sized
+{
+    pub fn new(value: V) -> Self {
+        Self { unit: PhantomData, value, }
     }
 }
 
-storage_types! {
-    types: PrimInt;
+impl<Ul, Ur, V> Div<Quantity<Ur, V>> for Quantity<Ul, V>
+where
+    //Ul: Conversion<V> + ?Sized,
+    Ul: Unit + ?Sized,
+    //Ur: Conversion<V> + ?Sized,
+    Ur: Unit + ?Sized,
+    //Ul::Dimension: Dimension + ?Sized,
+    //Ur::Dimension: Dimension + ?Sized,
+    //Ul::D::L: Sub<Ur::D::L>,
+    //Ul::Dimension::M: Sub<Ur::Dimension::M>,
+    //<<Ul as Unit>::D as Dimension>::L: Sub<<<Ur as Unit>::Dimension as Dimension>::L>,
+    //<<Ul as Unit>::Dimension as Dimension>::L: Sub<<<Ur as Unit>::Dimension as Dimension>::L>,
+    V: One,
+{
+    type Output = Quantity<
+        BaseUnit<
+            Dimension<
+                L = <Ul::D::L as Sub<Ul::D::L>>::Output,
+                //L = <<<Ur as Unit>::D as Dimension>::L as Sub<<<Ur as Unit>::D as Dimension>::L>>::Output,
+                M = <<<Ur as Unit>::D as Dimension>::M as Sub<<<Ur as Unit>::D as Dimension>::M>>::Output>,
+            Kind>,
+        V>;
 
-    impl ::Conversion<V> for V {
-        type T = ::num::rational::Ratio<V>;
-
-        #[inline(always)]
-        fn into_conversion(&self) -> Self::T {
-            (*self).into()
-        }
-    }
-
-    impl ::ConversionFactor<V> for ::num::rational::Ratio<V> {
-        #[inline(always)]
-        fn powi(self, e: i32) -> Self {
-            self.pow(e)
-        }
-
-        #[inline(always)]
-        fn value(self) -> V {
-            self.to_integer()
-        }
-    }
-}
-
-storage_types! {
-    types: BigInt, BigUint;
-
-    impl ::Conversion<V> for V {
-        type T = ::num::rational::Ratio<V>;
-
-        #[inline(always)]
-        fn into_conversion(&self) -> Self::T {
-            self.clone().into()
-        }
-    }
-
-    impl ::ConversionFactor<V> for ::num::rational::Ratio<V> {
-        #[inline(always)]
-        fn powi(self, e: i32) -> Self {
-            match e.cmp(&0) {
-                ::lib::cmp::Ordering::Equal => <Self as ::num::One>::one(),
-                ::lib::cmp::Ordering::Less => ::num::pow::pow(self.recip(), (-e) as usize),
-                ::lib::cmp::Ordering::Greater => ::num::pow::pow(self, e as usize),
-            }
-        }
-
-        #[inline(always)]
-        fn value(self) -> V {
-            self.to_integer()
-        }
+    fn div(self, rhs: Quantity<Ur, V>) -> Self::Output {
+        unimplemented!();
     }
 }
 
-storage_types! {
-    types: Rational, Rational32, Rational64;
-
-    impl ::Conversion<V> for V {
-        type T = V;
-
-        #[inline(always)]
-        fn into_conversion(&self) -> Self::T {
-            *self
-        }
-    }
-
-    impl ::ConversionFactor<V> for V {
-        #[inline(always)]
-        fn powi(self, e: i32) -> Self {
-            self.pow(e)
-        }
-
-        #[inline(always)]
-        fn value(self) -> V {
-            self
-        }
-    }
+#[derive(Debug)]
+pub struct BaseUnit<D, K>
+where
+    D: Dimension + ?Sized,
+    K: ?Sized,
+{
+    dimension: PhantomData<D>,
+    kind: PhantomData<K>,
 }
 
-storage_types! {
-    types: BigRational;
-
-    impl ::Conversion<V> for V {
-        type T = V;
-
-        #[inline(always)]
-        fn into_conversion(&self) -> Self::T {
-            self.clone()
-        }
-    }
-
-    impl ::ConversionFactor<V> for V {
-        #[inline(always)]
-        fn powi(self, e: i32) -> Self {
-            match e.cmp(&0) {
-                ::lib::cmp::Ordering::Equal => <Self as ::num::One>::one(),
-                ::lib::cmp::Ordering::Less => ::num::pow::pow(self.recip(), (-e) as usize),
-                ::lib::cmp::Ordering::Greater => ::num::pow::pow(self, e as usize),
-            }
-        }
-
-        #[inline(always)]
-        fn value(self) -> V {
-            self
-        }
-    }
+impl<D, K> Unit for BaseUnit<D, K>
+where
+    D: Dimension + ?Sized,
+    K: ?Sized,
+{
+    type D = D;
+    type K = K;
 }
 
-/// Utilities for formatting and printing quantities.
-pub mod fmt {
-    /// An enum to specify the display style to use.
-    #[derive(Clone, Copy, Debug)]
-    pub enum DisplayStyle {
-        /// Display the value and a unit abbreviation, e.g. "1.0 m", "327 s".
-        Abbreviation,
-
-        /// Display the value and full unit name (pluralized as appropriate),
-        /// e.g. "1 kilogram", "756 feet".
-        Description,
-    }
+impl<D, K, V> Conversion<V> for BaseUnit<D, K>
+where
+    D: Dimension + ?Sized,
+    K: ?Sized,
+    V: One,
+{
+    fn conversion() -> V { V::one() }
 }
 
-/// Unicode string slice manipulation for quantities.
-pub mod str {
-    /// Represents an error encountered while parsing a string into a `Quantity`.
-    #[allow(missing_copy_implementations)]
-    #[derive(Clone, Debug, Eq, PartialEq)]
-    pub enum ParseQuantityError {
-        /// No separators (spaces) were encountered.
-        NoSeparator,
+pub trait Kind: std::fmt::Debug {}
 
-        /// An error occurred while parsing the value (first) portion of the string.
-        ///
-        /// Due to exhaustiveness and type system limitations, this variant does not encode
-        /// the underlying parse error.
-        ValueParseError,
+// mod length {
+//     pub type Dimension = crate::Dimension<
+//         L = crate::P1,
+//         M = crate::Z0>;
+//     pub type Kind = crate::Kind;
 
-        /// The unit used wasn't found for this quantity.
-        ///
-        /// ### Notes
-        /// For now, only abbreviations are supported, so this error may be encountered even if the
-        /// unit name (description) is correct.
-        UnknownUnit,
-    }
+//     mod units {
+//         #[derive(Debug)]
+//         pub struct Meter;
+
+//         impl crate::Unit for Meter {
+//             type Dimension = super::Dimension;
+//             type Kind = super::Kind;
+//         }
+
+//         impl<V> crate::Conversion<V> for Meter
+//         where
+//             V: crate::One,
+//         {
+//             fn conversion() -> V { V::one() }
+//         }
+//     }
+
+//     pub type Length<V> = crate::Quantity<crate::BaseUnit<Dimension, Kind>, V>;
+//     pub type Meter<V> = crate::Quantity<units::Meter, V>;
+// }
+
+fn main() {
+    // let m = length::Meter::new(1.0);
+    // let l = length::Length::new(2.0);
+    // let k: Quantity<BaseUnit<Dimension<L = Z0, M = P1>, Kind>, f32> =
+    //     Quantity { unit: PhantomData, value: 3.0, };
+
+    // println!("{:?}", m);
+    // println!("{:?}", l);
+    // println!("{:?}", k);
+    // println!("{:?}", k / m);
 }
+
+*/

@@ -7,7 +7,7 @@
 #[macro_use]
 mod prefix;
 
-system! {
+uom_macros::system! {
     /// [International System of Quantities](http://jcgm.bipm.org/vim/en/1.6.html) (ISQ).
     quantities: ISQ {
         length: meter, L;
@@ -53,17 +53,4 @@ system! {
         volume::Volume,
         volume_rate::VolumeRate,
     }
-}
-
-/// [`Quantity`](struct.Quantity.html) type aliases using the default base units and parameterized
-/// on the underlying storage type.
-pub mod quantities {
-    ISQ!(si);
-}
-
-storage_types! {
-    /// [`Quantity`](struct.Quantity.html) type aliases using the default base units.
-    pub types: All;
-
-    ISQ!(si, V);
 }

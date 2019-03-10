@@ -1,6 +1,6 @@
 [package]
 name = "uom-macros"
-version = "0.0.0"
+version = "0.1.0"
 authors = ["Mike Boutin <mike.boutin@gmail.com>"]
 edition = "2018"
 description = "Units of measurement -- procedural macros"
@@ -22,5 +22,8 @@ coveralls = { repository = "iliekturtles/uom" }
 maintenance = { status = "actively-developed" }
 
 [dependencies]
+proc-macro2 = { version = "0.4", default-features = false }
+quote = { version = "0.6", default-features = false }
+syn = { version = "0.15", default-features = false, features = ["derive", "parsing", "proc-macro"] }
 
 [features]

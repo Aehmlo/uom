@@ -1,9 +1,0 @@
-[package]
-name = "feature_check"
-version = "0.1.0"
-
-[dependencies]
-uom = { path = "../.." }
-
-[features]
-default = []
